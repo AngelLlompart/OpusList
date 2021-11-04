@@ -119,6 +119,7 @@ public class DeleteDialog extends javax.swing.JDialog {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         DefaultComboBoxModel<Obra> comboModel = new DefaultComboBoxModel<Obra>();
         MainForm m = new MainForm();
+        //agafa els elements de la llista i els fica dins un comboBox
         for(Obra u: m.getObras()){
             comboModel.addElement(u);    
         }

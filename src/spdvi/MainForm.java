@@ -308,7 +308,7 @@ public class MainForm extends javax.swing.JFrame {
                 dataChanged = false;
             } catch (IOException ex) {
                 Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }   
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -336,6 +336,8 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_mniExitActionPerformed
 
     private void lstObrasMouseClicked(java.awt.event.MouseEvent evt) {                                          
+        //si es clicka dues vegades a un element de la llista, s'agafa l'objecte
+        //i es pasa el num de registre al txtField del UpdateDialog
         if (evt.getClickCount() == 2) {
             Obra selectedObra = lstObras.getSelectedValue();
             UpdateDialog update = new UpdateDialog(this, true);
