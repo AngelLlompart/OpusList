@@ -15,6 +15,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -23,10 +24,13 @@ import javax.swing.JTextField;
  * @author lawde
  */
 public class UpdateDialog extends javax.swing.JDialog {
-    private static final java.lang.reflect.Type LIST_OF_OBRA_TYPE = new TypeToken<List<Obra>>() {}.getType();
+
+    private static final java.lang.reflect.Type LIST_OF_OBRA_TYPE = new TypeToken<List<Obra>>() {
+    }.getType();
     private boolean update;
     private boolean ok;
     JFileChooser fileChooser = new JFileChooser();
+
     /**
      * Creates new form UpdateDialog
      */
@@ -225,9 +229,9 @@ public class UpdateDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-   
+
     private void txtRegistreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRegistreActionPerformed
-       
+
     }//GEN-LAST:event_txtRegistreActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -248,8 +252,26 @@ public class UpdateDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        this.setVisible(false);
-        update = true;
+        String error = "";
+        try {
+            if (txtTitol.getText() == null || txtTitol.getText().isBlank() || txtTitol.getText().isEmpty()
+                    || txtAny.getText() == null || txtAny.getText().isBlank() || txtAny.getText().isEmpty()
+                    || txtAutor.getText() == null || txtAutor.getText().isBlank() || txtAutor.getText().isEmpty()
+                    || txtFormat.getText() == null || txtFormat.getText().isBlank() || txtFormat.getText().isEmpty()) {
+                error = "Les dades no poden estar buides";
+                throw new ArgumentNullException(error);
+            }
+            update = true;
+            this.setVisible(false);
+        } catch (ArgumentNullException ex) {
+            update = false;
+            //surt la finestra i printa per consola l'error, el missatge depen de quin error hagi pasat, predomina el primer
+            System.err.println(error);
+            JOptionPane.showMessageDialog(null,
+                    error,
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
@@ -257,8 +279,10 @@ public class UpdateDialog extends javax.swing.JDialog {
         //posa les dades de la obra txtFields i la imatge, i mostra el panel ocult
         ok = true;
         MainForm m = new MainForm();
-        for (Obra o: m.getObras()){
-            if(o.getRegistre().equals(txtRegistre.getText())){
+        boolean obraExists = false;
+        for (Obra o : m.getObras()) {
+            if (o.getRegistre().equals(txtRegistre.getText())) {
+                obraExists = true;
                 File imageFile = new File(o.getImagePath() + "\\" + o.getImatge());
                 txtTitol.setText(o.getTitol());
                 txtAny.setText(o.getAny());
@@ -267,37 +291,46 @@ public class UpdateDialog extends javax.swing.JDialog {
                 fileChooser.setSelectedFile(imageFile);
                 setImage(o.getImagePath() + "\\" + o.getImatge());
                 pnlUpdate.setVisible(true);
+                txtRegistre.setEnabled(false);
                 //System.out.println(fileChooser.getSelectedFile().getAbsolutePath());
             }
+        }
+        if (!obraExists) {
+            System.err.println("El que has escrit registre no existeix");
+            JOptionPane.showMessageDialog(null,
+                    "El registre que has escrit registre no existeix",
+                    "Info",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnOkActionPerformed
 
     private void btnImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImageActionPerformed
         int returnStatus = fileChooser.showOpenDialog(this);
-        if (returnStatus == JFileChooser.APPROVE_OPTION){
+        if (returnStatus == JFileChooser.APPROVE_OPTION) {
             BufferedImage originalImage = null;
             setImage(fileChooser.getSelectedFile().getAbsolutePath());
         }
     }//GEN-LAST:event_btnImageActionPerformed
 
-    private void setImage(String image){
+    private void setImage(String image) {
         BufferedImage originalImage = null;
-        try { 
-            originalImage = ImageIO.read(new File (image));            
-            ImageIcon icon = resizeImageIcon(originalImage, lblImage.getWidth(), lblImage.getHeight()); 
+        try {
+            originalImage = ImageIO.read(new File(image));
+            ImageIcon icon = resizeImageIcon(originalImage, lblImage.getWidth(), lblImage.getHeight());
             lblImage.setIcon(icon);
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private ImageIcon resizeImageIcon(BufferedImage originalImage, int desiredWidth, int desiredHeight){
-        float aspecRatio = (float)originalImage.getWidth() / (float)originalImage.getHeight();
-        if(originalImage.getWidth() > originalImage.getHeight()){
+
+    private ImageIcon resizeImageIcon(BufferedImage originalImage, int desiredWidth, int desiredHeight) {
+        float aspecRatio = (float) originalImage.getWidth() / (float) originalImage.getHeight();
+        if (originalImage.getWidth() > originalImage.getHeight()) {
             desiredHeight = Math.round(desiredWidth / aspecRatio);
-        }else{
+        } else {
             desiredWidth = Math.round(desiredHeight * aspecRatio);
         }
-     
+
         Image resultingImage = originalImage.getScaledInstance(desiredWidth, desiredHeight, Image.SCALE_SMOOTH);
         BufferedImage outputImage = new BufferedImage(desiredWidth, desiredHeight, BufferedImage.TYPE_INT_RGB);
         outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
@@ -312,7 +345,7 @@ public class UpdateDialog extends javax.swing.JDialog {
     public void setFileChooser(JFileChooser fileChooser) {
         this.fileChooser = fileChooser;
     }
-    
+
     public boolean isOk() {
         return ok;
     }

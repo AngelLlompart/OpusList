@@ -205,7 +205,6 @@ public class InsertDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_txtAutorActionPerformed
 
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        this.setVisible(false);
         MainForm m = new MainForm();
         //comprovació d'errors
         String error = "";
@@ -225,10 +224,10 @@ public class InsertDialog extends javax.swing.JDialog {
                 if(txtRegistre.getText().equals(o.getRegistre())){
                     error = "No es pot repetir un numero de registre";
                     throw new ArgumentNullException(error);
-                }else{//es posa el insert a true si no ha tornat ningun dels dos errors
-                    insert = true;
                 }
             }
+            insert = true;
+            this.setVisible(false);
         } catch (ArgumentNullException ex) {
             //si dona error posam insert a false, si no es torna a posar false quan dona error, podria
             //insertar-se un valor amb errors si anteriorment s'ha insertant un be ja que insert seria true
