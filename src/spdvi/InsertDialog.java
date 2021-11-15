@@ -58,6 +58,11 @@ public class InsertDialog extends javax.swing.JDialog {
         lblImage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         lblRegistre.setText("Registre");
 
@@ -250,10 +255,14 @@ public class InsertDialog extends javax.swing.JDialog {
         //obre el fileChooser i crida al metode setImage amb el absolutePath de la imatge que s'ha elegeit en el FileChooser
         int returnStatus = fileChooser.showOpenDialog(this);
         if (returnStatus == JFileChooser.APPROVE_OPTION){
-            BufferedImage originalImage = null;
             setImage(fileChooser.getSelectedFile().getAbsolutePath());
         }
     }//GEN-LAST:event_btnImageActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        //BufferedImage = setImage(lblImage.getIcon());
+        //resizeImageIcon(lblImage.getIcon(), lblImage.getWidth(), lblImage.getHeight());
+    }//GEN-LAST:event_formWindowOpened
 
     private void setImage(String image){
         //inserta la imatge seleccionada al label
